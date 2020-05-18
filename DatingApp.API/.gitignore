@@ -2,6 +2,7 @@
 bin
 obj
 *.db
-appsettings.Json
+appsettings.Json,
+DatingApp.db
 
 
