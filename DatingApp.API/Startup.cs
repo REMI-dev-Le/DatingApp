@@ -40,6 +40,7 @@ namespace DatingApp.API
                 opt.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
             });
             services.AddCors();
+            services.Configure<CloudinarySettings>(Configuration.GetSection("CloudinarySettings"));
             services.AddAutoMapper(typeof(DatingRepositary).Assembly);
             services.AddScoped<IAuthRespository,AuthRepository>();
             services.AddScoped<IDatingRepositary,DatingRepositary>();
