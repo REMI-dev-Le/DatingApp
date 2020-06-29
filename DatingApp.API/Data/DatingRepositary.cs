@@ -1,6 +1,8 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DatingApp.API.Helpers;
 using DatingApp.API.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -26,14 +28,14 @@ namespace DatingApp.API.Data
 
         public async Task<photo> GetMainPhotoForUser(int userId)
         {
-            return await _context.Photod.Where(u => u.UserId == userId).FirstOrDefaultAsync(p =>p.IsMain);
+            return await _context.Photod.Where(u => u.UserId == userId).FirstOrDefaultAsync(p => p.IsMain);
         }
 
         public async Task<photo> GetPhoto(int id)
         {
-          var photo = await _context.Photod.FirstOrDefaultAsync(p => p.Id == id);
+            var photo = await _context.Photod.FirstOrDefaultAsync(p => p.Id == id);
 
-          return photo;
+            return photo;
         }
 
         public async Task<User> GetUser(int id)
@@ -43,16 +45,41 @@ namespace DatingApp.API.Data
             return user;
         }
 
-        public async Task<IEnumerable<User>> GetUsers()
+        public async Task<PagedList<User>> GetUsers(UserParams userParams)
         {
-        var users = await _context.Users.Include(p => p.Photos).ToListAsync();
+            var users = _context.Users.Include(p => p.Photos).OrderByDescending(u => u.lastActive).AsQueryable();
 
-        return users;
+            users = users.Where(u => u.Id != userParams.UserId);
+
+            users = users.Where(u => u.Gender == userParams.Gender);
+
+            if (userParams.MinAge != 18 || userParams.MaxAge != 99)
+            {
+                var minDob = DateTime.Today.AddYears(-userParams.MaxAge - 1);
+                var maxDob = DateTime.Today.AddYears(-userParams.MinAge - 1);
+
+                users = users.Where(x => x.DateOfBirth >= minDob && x.DateOfBirth <= maxDob);
+            }
+
+            if (!string.IsNullOrEmpty(userParams.OrderBy))
+            {
+                switch (userParams.OrderBy)
+                {
+                    case "created":
+                        users = users.OrderByDescending(u => u.Created);
+                        break;
+                    default:
+                        users = users.OrderByDescending(u => u.lastActive);
+                        break;
+                }
+            }
+
+            return await PagedList<User>.CreateAsync(users, userParams.PageNumber, userParams.PageSize);
         }
 
         public async Task<bool> SaveAll()
         {
-            return await _context.SaveChangesAsync() >0;
+            return await _context.SaveChangesAsync() > 0;
         }
 
     }

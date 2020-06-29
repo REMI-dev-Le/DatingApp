@@ -101,12 +101,12 @@ namespace DatingApp.API.Migrations
                     b.Property<string>("Url")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("userId")
+                    b.Property<int>("UserId")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("userId");
+                    b.HasIndex("UserId");
 
                     b.ToTable("Photod");
                 });
@@ -115,7 +115,7 @@ namespace DatingApp.API.Migrations
                 {
                     b.HasOne("DatingApp.API.Models.User", "User")
                         .WithMany("Photos")
-                        .HasForeignKey("userId")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

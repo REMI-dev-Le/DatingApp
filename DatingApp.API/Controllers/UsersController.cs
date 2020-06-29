@@ -19,20 +19,31 @@ namespace DatingApp.API.Controllers
     {
         private readonly IDatingRepositary _repo;
         private readonly IMapper _mapper;
-    
+
 
         public UsersController(IDatingRepositary Repo, IMapper mapper)
         {
-            this._mapper = mapper;
+            _mapper = mapper;
             _repo = Repo;
         }
 
         [HttpGet]
-        public async Task<IActionResult> Getsuers()
+        public async Task<IActionResult> GetUsers([FromQuery] UserParams userParams)
         {
-            var users = await _repo.GetUsers();
+            var currentUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var userFromRepo = await _repo.GetUser(currentUserId);
+
+            userParams.UserId = currentUserId;
+            if (string.IsNullOrEmpty(userParams.Gender))
+            {
+                userParams.Gender = userFromRepo.Gender == "male" ? "female" : "male";
+            }
+
+            var users = await _repo.GetUsers(userParams);
 
             var usersToReturn = _mapper.Map<IEnumerable<UserForListFto>>(users);
+
+            Response.AddPagination(users.CurrentPage, users.PageSize, users.TotalCount, users.TotalPages);
 
             return Ok(usersToReturn);
         }
@@ -49,18 +60,18 @@ namespace DatingApp.API.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateUser(int id, UserForUpdateDto userforUpdateDto)
         {
-            if(id != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
-               return Unauthorized();
+            if (id != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+                return Unauthorized();
 
-                var userFromRepo = await _repo.GetUser(id);
+            var userFromRepo = await _repo.GetUser(id);
 
-                _mapper.Map(userforUpdateDto, userFromRepo);
+            _mapper.Map(userforUpdateDto, userFromRepo);
 
-                if(await _repo.SaveAll())
-                   return NoContent();
+            if (await _repo.SaveAll())
+                return NoContent();
 
-                throw new Exception($"Updating user{id} failed on save");   
-            
+            throw new Exception($"Updating user{id} failed on save");
+
         }
     }
 }
