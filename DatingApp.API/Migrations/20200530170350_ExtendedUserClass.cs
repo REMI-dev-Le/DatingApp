@@ -71,6 +71,7 @@ namespace DatingApp.API.Migrations
                     DateAdded = table.Column<DateTime>(nullable: false),
                     IsMain = table.Column<bool>(nullable: false),
                     userId = table.Column<int>(nullable: false)
+                   
                 },
                 constraints: table =>
                 {
