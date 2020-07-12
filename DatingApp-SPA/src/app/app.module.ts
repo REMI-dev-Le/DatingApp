@@ -10,7 +10,7 @@ import { JwtModule } from '@auth0/angular-jwt';
 import { NgxGalleryModule } from 'ngx-gallery-9';
 import { FileUploadModule } from 'ng2-file-upload';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
-import { TimeagoModule } from 'ngx-timeago';
+import { TimeagoModule, TimeagoPipe } from 'ngx-timeago';
 import { PaginationModule } from 'ngx-bootstrap/pagination';
 import { ButtonsModule } from 'ngx-bootstrap/buttons';
 
@@ -29,13 +29,15 @@ import { MemberCardComponent } from './members/member-card/member-card.component
 import { MemberDetailComponent } from './members/member-detail/member-detail.component';
 import { AuthGuard } from './_guards/auth.guard';
 import { UserService } from './_services/user.service';
-import { MemberDetailResolver } from './_resolvers/member-detail-resolver';
-import { MemberListResolver } from './_resolvers/member-list-resolver';
+import { MemberDetailResolver } from './_resolvers/member-detail.resolver';
+import { MemberListResolver } from './_resolvers/member-list.resolver';
 import { MemberEditComponent } from './members/member-edit/member-edit.component';
-import { MemberEditResolver } from './_resolvers/member-edit-resolver';
+import { MemberEditResolver } from './_resolvers/member-edit.resolver';
 import { Preventunsavedchanges } from './_guards/prevent-unsaved-changes-guard';
 import { PhotoEditorComponent } from './members/Photo-editor/Photo-editor.component';
 import { ListResolver } from './_resolvers/Lists.resolver';
+import { MessageResolver } from './_resolvers/message.resolver';
+import { MemberMessagesComponent } from './messages/member-messages/member-messages.component';
 
 export function tokenGetter() {
   return localStorage.getItem('token');
@@ -52,7 +54,8 @@ export function tokenGetter() {
     MemberCardComponent,
     MemberDetailComponent,
     MemberEditComponent,
-    PhotoEditorComponent
+    PhotoEditorComponent,
+      MemberMessagesComponent
    ],
   imports: [
     BrowserModule,
@@ -87,7 +90,8 @@ export function tokenGetter() {
     MemberListResolver,
     MemberEditResolver,
     Preventunsavedchanges,
-    ListResolver
+    ListResolver,
+    MessageResolver
   ],
   bootstrap: [AppComponent],
 })

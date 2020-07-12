@@ -14,6 +14,6 @@ namespace DatingApp.API.Helpers
 
         public int UserId { get; set; }
 
-        public string MessageContainer { get; set; }= "Unread";
+        public string MessageContainer { get; set; }= "Outbox";
     }
 }

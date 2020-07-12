@@ -2,7 +2,6 @@
 bin
 obj
 *.db
-appsettings.Json,
-DatingApp.db
+wwwroot
 
 

@@ -14,7 +14,7 @@ import { AlertifyService } from 'src/alertify.service';
 export class MessagesComponent implements OnInit {
   messages: Message[];
   pagination: Pagination;
-  messageContainer: 'Unread';
+  messageContainer: 'Outbox';
 
   constructor(
     private userService: UserService,
